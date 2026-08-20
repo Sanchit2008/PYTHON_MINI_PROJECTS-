@@ -1,0 +1,266 @@
+import ctypes #IMPORTING CTYPES MODULE FOR IMPORTING REFERENTIAL ARRAY 
+
+class python_list:
+    """DEFINING A CLASS FOR CREATING DYNAMIC PYTHON LIKE LIST FROM A NORMAL REFERENTIAL ARRAY OF CPP"""
+
+    #CONSTRUCTOR
+    def __init__(self):
+        """DEFINING A CONSTRUCTOR TO AUTOMATICALLY CALL A FUNCTION TO CREATE AN ARRAY AND DEFINING ITS SIZE AND NO. OF ELEMENTS AFTER CREATING AN OBJECT OF THE CLASS"""
+
+        self.size = 1 #DEFINING THE SIZE OF OUR NEWLY CREATED ARRAY TO BE 1
+
+        self.n = 0 #DEFINING THE NO. OF ELEMENTS THAT ARE 0 WHEN THE ARRAY IS NEWLY CREATED 
+
+        self.A = self.__make_array(self.size) #CREATING AN ARRAY AFTER OBJECT IS CREATED OF SELF.SIZE
+
+    #CREATE ARRAY
+    def __make_array(self, capacity):
+        """DEFINING A FUNCTION TO CREATE AN ARRAY OF SIZE PASSED AS ARGUMENT"""
+
+        return(ctypes.py_object*capacity)()#RETURNS A NEWLY CREATED ARRAY OF SIZE CAPACITY 
+
+    #LEN FUNCTION
+    def __len__(self):
+        """DEFINING A FUNCTION TO RETURN THE NO. OF ELEMENTS IN THE ARRAY"""
+
+        return self.n #RETURNS THE NO. OF ELEMENTS IN ARRAY
+
+    #CHANGE SIZE OF ARRAY
+    def __increase(self, new_size):
+        """DEFINING A FUNCTION TO CHANGE THE SIZE OF ARRAY TO MAKE IT DYNAMIC"""
+
+        B = self.__make_array(new_size)#CREATING A NEW ARRAY OF THE SIZE NEEDED 
+
+        for i in range(self.n):#LOOP TO COPY THE ELEMENTS OF THE ORIGINAL ARRAY TO NEW ARRAY
+
+            B[i] = self.A[i]#COPYING ELEMENTS OF ORIGINAL ARRAY TO NEW ARRAY
+
+        self.A = B #REASSIGNING THE NEW ARRAY TO OUR ORIGINAL ARRAY
+
+        self.size = new_size #UPDATING THE SIZE OF OUR ARRAY TO THE NEW SIZE 
+
+    #APPEND FUNCTION
+    def append(self, item):
+        """DEFINING A FUNCTION TO ADD NEW ELEMENTS AT THE END OF OUR ARRAY"""
+
+        if self.size == self.n : #CHECKING IF THERE IS SPACE TO ADD ONE MORE ELEMENT
+
+            self.__increase(self.size + 5) #INCREASING THE SIZE OF OUR ARRAY BY 5 
+
+        self.A[self.n] = item #ADDING THE NEW ELEMENT AT THE END OF OUR ARRAY
+
+        self.n += 1 #UPDATING THE NO. OF ELEMENTS IN OUR ARRAY 
+
+    #PRINT FUNCTION 
+    def __str__(self):
+        """DEFINING A DUNDER FUNCTION TO PRINT OUR ARRAY SAME AS HOW A LIST IS PRINTED IN PYTHON"""
+
+        result = "" #CREATING A VARIABLE TO STORE WHATS TO BE PRINTED
+
+        for i in range(self.n): #DEFINING A LOOP TO PRINT ALL THE ELEMENTS OF OUR ARRAY
+
+            result = result + str(self.A[i]) + ", " #UPDATING THE VARIABLE WITH NEW ELEMENT
+
+        return "[" + result[:-2] + "]" #FORMATTING AND RETURNING THE STRING WHICH IS TO BE PRINTED
+
+    #INDEXING, NEGATIVE INDEXING, SLICING
+    def __getitem__(self, i):
+        """DEFINING A DUNDER FUNCTION TO ACCESS OUR ELEMENTS THROUGH INDEXING, NEGATIVE INDEXING, AND SLICING"""
+
+        if isinstance(i, slice):#CHECKING IF THE ARGUMENT PASSED IN THE FUNCTION IS FOR INDEXIN OR SLICING
+
+            start, stop, step = i.indices(self.n)#ASSIGNING THE VARIABLES AS PER THE PASSES ARGUMENTS
+
+            sliced_elements = [self.A[x] for x in range (start, stop, step)]#CREATING A LIST OF THE ELEMENTS ACCORDING TO PASSED ARGUMENTS
+
+            return(sliced_elements)#RETURNING THE LIST TO AN USER
+        
+        if (-self.n) < i < 0: #CHECKING IF THE ARGUMENT PASSED IN THE FUNCTION IS A VALID NEGATIVE INDEX
+
+            i = i + self.n #MODIFYING THE NEGATIVE INDEX INTO THE CORRECT POSITIVE INDEX
+
+            return self.A[i]#RETURNING THE ELEMENT WHICH IS ON THE INDEX PROVIDED
+
+        elif 0 <= i < self.n: #CHECKING IF THE ARGUMENT PASSED IN THE LIST IS A VALID POSTIVE INDEX
+
+            return self.A[i]#RETURNING THE ELEMENT WHICH IS ON THE INDEX PROVIDED
+
+        else : #IF INDEX PROVIDED IS NOT AVAILABE OR INVALID
+
+            return("Index invalid or not available")#ERROR MESSAGE TO BE PRINTED 
+                
+    #POP FUNCTION
+    def pop(self):
+        """DEFINING A FUNCTION TO REMOVE THE LAST ELEMENT IN THE ARRAY"""
+
+        self.n -= 1 #UPADING THE NO. OF ELEMENTS 
+
+        self.A[self.n] = None #REMOVING THE ELEMENT FROM THE ARRAY
+
+    #CLEAR FUNCTION
+    def clear(self):
+        """DEFINING A FUNCTION TO CLEAR/DELETE ALL THE ELEMENTS IN ENTIRE ARRAY"""
+
+        for i in range(self.n): #LOOP FOR LOOP FOR DELETING THE ELEMENT ONE BY ONE 
+
+            self.A[i] = None #DELETING THE ELEMENT
+
+        self.size = 1 #UPDATING THE SIZE OF ARRAY TO DEFAULT/1
+
+        self.n = 0 #UPDATING THE NO. OF ELEMENTS TO DEFAULT/0
+
+    #FIND FUNTION
+    def find(self, item):
+        """DEFINING A FUNCTION TO FIND THE INDEX NO. OF SPECIFIC VALUE IN ARRAY"""
+
+        for i in range(self.n): #DEFINING A LOOP FOR CHECKING THE ELEMENT ONE BY ONE
+
+            if self.A[i] == item: #CHECKING AND COMPARING THE ELEMENT WITH GIVEN ARGUMENT VALUE
+
+                return i #RETURNING THE INDEX NO. IF THE VALUE MATCHED
+             
+        return "Item not in list" #ERROR MSG TO BE PRINTED IF NO SUCK ELEMENT EXISTS IN ARRAY
+
+    #INSERT FUNCTION
+    def insert(self, item, index):
+        """DEFINING A FUNCTION TO INSERT A VALUE AT ANY GIVEN INDEX NO. PROVIDED BY USER"""
+
+        m = self.n - 1 #CREATING A TEMP VARAIBALE TO STORE THE LAST INDEX NO.
+
+        if self.size == self.n: #CHECKING IF THE ARRAY HAS SPACE TO ACCOMODATE THE ELEMENT
+
+            self.__increase(self.size + 1)#INCREASING SIZE IF THE ARRAY DOES NOT HAVE ENOUGH SPACE
+
+        if 0 <= index << self.n: #CHECKING IF THE INDEX PROVIDED IS VALID
+
+            for i in range(self.n,index,-1): #DEFINING A LOOP TO SHIFT THE ELEMENTS ONE INDEX NO. AHEAD FOR ALL THE ELEMENTS AFTER THE INDEX NO. PROVIDED BY USER
+
+                self.A[i] = self.A[m]#SHIFTING THE ELEMENTS
+
+                m -= 1  
+
+        else: #WHAT TO DO IF INDEX PROVIDED IS INVALID
+
+            print("Invalid Index") #MSG TO BE PRINTED IF INDEX PROVIDED IS INVALID
+
+        self.A[index] = item #INSERTING THE ELEMENT PROVIDED IN THE INDEX NO. PROVIDED
+
+        self.n += 1 #UPDATING THE NO. OF ELEMENTS IN OUR ARRAY
+
+    #REMOVE FUNCTION
+    def remove(self, value):
+        """DEFINING A FUNCTION TO REMOVE AN ELEMENT FROM ARRAY BY ITS FACE VALUE"""
+
+        index = self.find(value)#FINDING THE INDEX NO. OF THE ELEMENT TO BE DELETED 
+
+        if type(index) == int: #CHECKING IF THE VALUE EXISTS IN THE ARRAY
+
+            for i in range(index,self.n-1): #DEFINING A LOOP TO SHIFT THE ELEMENTS OF ARRAY ONE POSITION BACKWARDS
+
+                 self.A[i] = self.A[i+1] #SHIFTING THE ELEMENTS
+
+        else: #IF ELEMENT NOT IN THE ARRAY
+
+            print(index) #TO PRINT ERROR MSG
+
+        self.n -= 1 #UPDATING THE NO. OF ELEMENTS IN OUR ARRAY
+
+    #DELETE FUNCTION
+    def __delitem__ (self, pos):
+        """DEFINING A DUNDER FUNCTION TO DELETE ELEMENTS FROM ARRAY BY ITS INDEX NO."""
+
+        value = self.A[pos] #EXTRACTING THE ELEMENT BY ITS INDEX VALUE
+
+        self.remove(value)#REMOVING THE ELEMENT USING THE DELETE FUNCTION ALREADY CREATED
+
+    #MIN FUNCTION
+    def min(self):
+        """DEFINING A FUNCTION TO GET THE MINIMUM VALUE IN AN ARRAY"""
+
+        temp_min = self.A[0]#CREATING A TEMPORARY VARIABLE AND STORING THE FIRST ELEMENT OF OUR ARRAY IN THE VARIBALE 
+
+        for i in range(self.n): #DEFINING A LOOP TO COMPARE EACH ELEMENT OF THE ARRAY TO THE TEMPORARY VARIABLE
+
+            if temp_min > self.A[i]: #LOGIC TO UPDATE THE TEMPORARY VARIABE IF ANY ELEMENT IS FOUND SMALLER THAN IT
+
+                temp_min = self.A[i]#UPDATING THE TEMPORARY VARIABLE
+
+        return temp_min #RETURNING THE MINIMUM VALUE FOUND IN THE END
+
+    #MAX FUNCTION
+    def max(self):
+        """DEFINING A FUNCTION TO GET THE MAXIMUM VALUE IN AN ARRAY"""
+
+        temp_max = self.A[0]#CREATING A TEMPORARY VARIABLE AND STORING THE FIRST ELEMENT OF OUR ARRAY IN THE VARIBALE 
+
+        for i in range(self.n):  #DEFINING A LOOP TO COMPARE EACH ELEMENT OF THE ARRAY TO THE TEMPORARY VARIABLE
+
+            if temp_max < self.A[i]: #LOGIC TO UPDATE THE TEMPORARY VARIABE IF ANY ELEMENT IS FOUND GREATER THAN IT
+
+                temp_max = self.A[i]#UPDATING THE TEMPORARY VARIABLE
+
+        return temp_max #RETURNING THE MAXIMUM VALUE FOUND IN THE END
+
+    #SUM FUNCTION
+    def sum(self):
+        """DEFINING A FUNCTION TO GET THE SUM OF ALL THE ELEMENTS IN AN ARRAY"""
+
+        temp_sum = 0 #CREATING A TEMPORARY VARIABLE AND STORING 0 IN IT
+
+        for i in range(self.n): #DEFINING A LOOP TO ADD ALL THE ELEMENTS IN THE ARRAY
+
+            temp_sum += self.A[i]#ADDING EACH ELEMENT IN OUR TEMPORARY VARIBALE 
+
+        return temp_sum #RETURNING THE SUM OF ALL THE ELEMENTS IN OURT ARRAY
+
+    #EXTEND FUNCTION
+    def extend(self, item):
+        """DEFINING A FUNCTION TO ADD MORE THAN 1 ITEM IN OUR ARRAY AT THE SAME TIME"""
+
+        temp_list = list(item) #CONVERTING THE VALUES GIVEN BY USER TO LIST AND STORING IT IN A TEMPORARY VARIABLE
+
+        for i in temp_list: #DEFINING A LOOP TO STORE EACH ELEMENT IN THE LIST TO OUR ARRAY
+
+            self.append(i)#ADDING ELEMENTS ONE BY ONE TO OUR ARRAY USING APPEND FUNCTION DEFINED ABOVE 
+
+    #MERGE FUNCTION
+    def merge(self, secondary):
+        """DEFINING A FUNCTION TO MERGE TWO DATA STRUCTURES TOGETHER"""
+
+        secondary = list(secondary) #CONVERTING THE VALUES GIVEN BY USER TO LIST AND STORING IT IN A TEMPORARY VARIABLE
+
+        for i in secondary : #DEFINING A LOOP TO STORE EACH ELEMENT IN THE LIST TO OUR ARRAY
+
+            self.append(i)#ADDING ELEMENTS ONE BY ONE TO OUR ARRAY USING APPEND FUNCTION DEFINED ABOVE 
+
+    #SORT FUNCTION
+    def sort(self):
+        """DEFINING A FUNCTION TO SORT THE ARRAY USING QUICKSORT LOGIC"""
+
+        if len(self.A) <= 1: #CHECKING IF LENGTH OF THE ARRAY IS LESS THAN OR EQUAL TO ONE SINCE SUCH ARRAY IS ALREADY SORTED
+
+            return 
+
+        def quicksort(arr): 
+            """DEFINING THE ACTUAL LOGIC OF QUICKSORT FUNCTION"""
+
+            if len(arr) <= 1 : #CHECKING IF LENGTH OF THE ARRAY IS LESS THAN OR EQUAL TO ONE SINCE SUCH ARRAY IS ALREADY SORTED
+
+                return arr
+
+            pivot = arr[len(arr) // 2]#CREATING A TEMPORARY VARIABLE TO STORE THE NO. OF ELEMENTS IN THE ARRAY DIVIDED BY 2 
+
+            left = [x for x in arr if x < pivot]#SPLITTING THE ELEMENTS IN THE FIRST HALF OF ARRAY
+
+            middle = [x for x in arr if x == pivot]#SPLITTING THE ELEMENTS IN THE MIDDLE OR ARRAY
+
+            right = [x for x in arr if x > pivot]#SPLITTING THE ELEMENTS IN THE LAST HALF OF ARRAY
+
+            return quicksort(left) + middle + quicksort(right) #USING RECURRING LOGIC TO SORT EACH ELEMENT
+
+        result = quicksort([self.A[i] for i in range(self.n)])#STORING THE SORTED ARRAY INTO LIST
+
+        for i in range(self.n): #SENDING THE LIST OF SORTED ELEMENTS INTO OUR ARRAY
+
+            self.A[i] = result[i]#SENDING EACH ELEMENT ONE BY ONE TO OUR ARRAY
+    
