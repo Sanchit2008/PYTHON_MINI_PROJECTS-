@@ -271,3 +271,11 @@ class LinkedList:
             self.n -= 1
 
             return
+        
+ll = LinkedList()
+ll.append(5)
+ll.append(21)
+ll.append(3)
+print(ll)
+del ll[-1]
+print(ll)
