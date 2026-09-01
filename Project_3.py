@@ -42,13 +42,19 @@ class Stack:
     def pop(self):
         """DEFINING A FUNCTION TO DELETE VALUES FROM TOP"""
 
-        popped_data = self.top.data #STORING THE POPPED DATA
+        if self.Is_Empty() : #LOGIC IF OUR STACK IS EMPTY
 
-        self.top = self.top.next #ASSIGNING TOP TO NEXT NODE
+            return "Stack is Empty"
 
-        self.n -= 1 #UPDATING THE NO. OF NODES IN STACK
+        else : #LOGIC IF STACK IS NOT EMPTY
 
-        return popped_data
+            popped_data = self.top.data #STORING THE POPPED DATA
+
+            self.top = self.top.next #ASSIGNING TOP TO NEXT NODE
+
+            self.n -= 1 #UPDATING THE NO. OF NODES IN STACK
+
+            return popped_data
 
     #PEEK FUNCTION
     def peek(self):
@@ -56,11 +62,11 @@ class Stack:
 
         if self.Is_Empty() : #IF OUR STACK IS EMPTY
 
-            return "Stack is Empyty" #RETURNING MSG IF STACK IS NOT EMPTY
+            return "Stack is Empty" #RETURNING MSG IF STACK IS NOT EMPTY
 
         else :
 
-            return self.top #RETURNING TOP IF STACK IS NOT EMPTY
+            return self.top.data #RETURNING TOP IF STACK IS NOT EMPTY
 
     #PRINT FUNCTION
     def __str__(self):
